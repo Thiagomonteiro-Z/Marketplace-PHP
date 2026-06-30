@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserRegisteredEmail;
 
 class RegisterController extends Controller
 {
@@ -53,6 +55,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'max:255'],
         ]);
     }
 
@@ -68,13 +71,21 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'ROLE_USER',
         ]);
     }
 
     protected function registered(Request $request, $user)
     {
-        if(session()->has('cart')) {
+        Mail::to($user->email)->send(new UserRegisteredEmail($user));
+
+        if ($user->role === 'ROLE_OWNER')
+            return redirect()->route('admin.stores.index')->with('success', 'Cadastro realizado com sucesso!');
+
+        if($user->role === 'ROLE_USER' && session()->has('cart')) {
             return redirect()->route('checkout.index');
+        } else {
+            return redirect()->route('home')->with('success', 'Cadastro realizado com sucesso!');
         }
 
         return null;

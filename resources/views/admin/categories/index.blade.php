@@ -30,7 +30,7 @@
         </tbody>
     </table>
     <div class="justify-content-center">
-        {{ $categories->links() }}
+        {{-- $categories->links() --}}
     </div>
 
 

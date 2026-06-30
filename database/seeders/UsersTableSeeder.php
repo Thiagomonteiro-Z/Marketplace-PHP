@@ -19,7 +19,5 @@ class UsersTableSeeder extends Seeder
         User::factory(40)->create()->each(function (User $user) {
             $user->store()->save(Store::factory()->make());
         });
-
-
-     }
+    }
 }

@@ -18,6 +18,9 @@
                 @auth
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
+                            <a class="nav-link @if(request()->is('admin/orders*'))active @endif" aria-current="page" href="{{ route('admin.orders.my') }}">Meus Pedidos</a>
+                        </li>
+                         <li class="nav-item">
                             <a class="nav-link @if(request()->is('admin/stores*'))active @endif" aria-current="page" href="{{ route('admin.stores.index') }}">Lojas</a>
                         </li>
                         <li class="nav-item">
@@ -27,16 +30,23 @@
                             <a class="nav-link @if(request()->is('admin/categories*'))active @endif" href="{{ route('admin.categories.index') }}">Categorias</a>
                         </li>
                     </ul>
-                    <li class="navbar-nav">
-                        <span class="nav-link">{{ auth()->user()->name }} - </span>
-                    </li>
+
                     <div class="d-flex">
                         <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.notifications.index') }}" class="nav-link">
+                                    <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                    <i class="fas fa-solid fa-bell"></i>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#" onclick="event.preventDefault(); document.querySelector('#logout-form').submit();">Sair</a>
                                 <form id="logout-form" class="logout"  action="{{ route('logout') }}" method="post" style="display: none;">
                                     @csrf
                                 </form>
+                            </li>
+                            <li class="navbar-nav">
+                                <span class="nav-link">{{ auth()->user()->name }} - </span>
                             </li>
 
                         </ul>

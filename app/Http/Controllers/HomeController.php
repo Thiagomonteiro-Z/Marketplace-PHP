@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 
-
 class HomeController extends Controller
 {
     private $product;
@@ -26,9 +25,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = $this->product->limit(8)->get();
+        $products = $this->product->limit(6)->orderBy('id', 'DESC')->get();
+        $stores = \App\Models\Store::limit(3)->get();
 
-        return view('welcome', compact('products'));
+        return view('welcome', compact('products', 'stores'));
     }
 
     public function single($slug)

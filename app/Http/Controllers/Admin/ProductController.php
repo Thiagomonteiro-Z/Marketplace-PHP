@@ -23,8 +23,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $userStore = auth()->user()->store;
-        $products = $userStore->products()->paginate(10);
+        $user = auth()->user();
+
+        if(!$user->store) {
+            return redirect()->route('admin.stores.create')->with('warning', 'Você precisa criar uma loja antes de cadastrar produtos.');
+        }
+
+        $products = $user->store()->products()->paginate(10);
 
         return view('admin.products.index', compact('products'));
     }

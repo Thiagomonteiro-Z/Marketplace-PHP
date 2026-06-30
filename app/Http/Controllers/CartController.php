@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CartController extends Controller
 {
@@ -16,7 +17,13 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
-        $product = $request->get('product');
+        $productData = $request->get('product');
+
+        $product = Product::whereSlug($productData['slug']);
+
+        if(!$product->count() || $productData['amount'] <= 0) return redirect()->route('home');
+
+        $product = array_merge($productData, $product->first(['name', 'price', 'store_id'])->toArray());
 
         if(session()->has('cart')) {
             $products = session()->get('cart');
@@ -66,6 +73,19 @@ class CartController extends Controller
         $products = array_map(function($line) use($slug, $amount){
             if($slug == $line['slug']) {
                 $line['amount'] += $amount;
+            }
+
+            return $line;
+        }, $products);
+
+        return $products;
+    }
+
+    public function productUpdate($slug, $amount, $products)
+    {
+        $products = array_map(function($line) use($slug, $amount){
+            if($slug == $line['slug']) {
+                $line['amount'] = $amount;
             }
 
             return $line;
